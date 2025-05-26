@@ -4,10 +4,9 @@ import cv2
 import imutils
 import numpy as np
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+#pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 img = cv2.imread('C:/matricula2.jpg',cv2.IMREAD_COLOR)
-img = cv2.resize(cap, (620,480) )
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 gray = cv2.bilateralFilter(gray, 13, 15, 15) 
@@ -45,7 +44,7 @@ new_image = cv2.bitwise_and(img,img,mask=mask)
 (bottomx, bottomy) = (np.max(x), np.max(y))
 Cropped = gray[topx:bottomx+1, topy:bottomy+1]
 
-text = pytesseract.image_to_string(Cropped, config='--psm 11')
+text = pytesseract.image_to_string(Cropped, config='--psm 11', lang='spa')
 print("programming_fever's License Plate Recognition\n")
 print("Detected license plate Number is:",text)
 img = cv2.resize(img,(500,300))

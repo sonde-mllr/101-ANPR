@@ -44,23 +44,28 @@ if plate_contour is None:
 # Mask everything except the plate
 mask = np.zeros(gray.shape, np.uint8)
 cv2.drawContours(mask, [plate_contour], 0, 255, -1)
-masked = cv2.bitwise_and(image, image, mask=mask)
+masked = cv2.bitwise_and(gray, gray, mask=mask)
 
-# Crop the plate area
-(x, y) = np.where(mask == 255)
-(topx, topy) = (np.min(x), np.min(y))
-(bottomx, bottomy) = (np.max(x), np.max(y))
-cropped = gray[topx:bottomx+1, topy:bottomy+1]
+# Find bounding rectangle for the plate contour
+x, y, w, h = cv2.boundingRect(plate_contour)
+cropped = masked[y:y+h, x:x+w]
+
+# Optional: Show the cropped plate for debugging
+cv2.imshow("Cropped Plate", cropped)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 # OCR with pytesseract
-custom_config = r'--oem 3 --psm 11'
+custom_config = r'--psm 7'  # psm 7 assumes a single text line, better for plates
 language = r'spa'
-text = pytesseract.image_to_string(cropped, config=custom_config,lang=language)
+text = pytesseract.image_to_string(cropped, config=custom_config, lang=language)
 print("Detected Number Plate Text:", text.strip())
 
-# Display the results
-cv2.imshow("Original Image", image)
-cv2.imshow("Masked Plate", masked)
-cv2.imshow("Cropped Plate", cropped)
+# Draw a red rectangle around the detected plate on the original image
+output_image = image.copy()
+cv2.rectangle(output_image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+# Show the image with the red rectangle
+cv2.imshow("Detected Plate", output_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
