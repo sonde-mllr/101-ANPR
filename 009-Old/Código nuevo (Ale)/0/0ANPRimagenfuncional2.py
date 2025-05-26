@@ -2,10 +2,11 @@
 import cv2
 import imutils
 import numpy as np
-import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+import pytesseract 
+from PIL import Image
 
-img = cv2.imread('E:/vscode/.vscode/ANPR/imagenes//matricula2.jpg',cv2.IMREAD_COLOR)
+
+img = cv2.imread('/home/ale/Documentos/101-Python/002ANPR/Código nuevo (Ale)/ANPR/imagenes/matricula2.jpg',cv2.IMREAD_COLOR)
 img = cv2.resize(img, (600,400) )
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
@@ -44,7 +45,7 @@ new_image = cv2.bitwise_and(img,img,mask=mask)
 (bottomx, bottomy) = (np.max(x), np.max(y))
 Cropped = gray[topx:bottomx+1, topy:bottomy+1]
 
-text = pytesseract.image_to_string(Cropped, config='--psm 11')
+text = pytesseract.image_to_string(Cropped, config='--psm 11', lang='spa')
 print("programming_fever's License Plate Recognition\n")
 print("Detected license plate Number is:",text)
 img = cv2.resize(img,(500,300))
